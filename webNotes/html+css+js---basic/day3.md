@@ -88,4 +88,3 @@
 * 嵌套样式 <style> </style> 只能当前页面使用 下存放当前页面的样式
 * 行内样式 <div style="color="red";font-size:200px"></div>       当前标签 用得少
 * * 外联样式 <link rel="stylesheet" href="路径.css"> css文件中不需要style标签  所有页面都可以用  存放公共样式
-                                                                                                                                                                                                                                                                    

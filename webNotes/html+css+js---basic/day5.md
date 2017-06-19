@@ -60,7 +60,7 @@
 * margin：上下40px  左右80px
 * margin:40px上 60px左右 80px下;
 * maigin：40px上 60px右 80px下 100px左；
-* 单独设置 margin-top/right/bottom/left：10p
+* 单独设置 margin-top/right/bottom/left：10px
 * 很对标签默认带有margin和padding 将来在页面布局时要清除margin padding
 	* body标签默认带有8px的margin
 	* p标签自带margin-top和bottom 与字体大小相同
