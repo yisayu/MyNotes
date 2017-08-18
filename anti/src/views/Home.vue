@@ -3,11 +3,11 @@
     <v-header></v-header>
     <top-nav></top-nav>
     <el-row>
-      <el-col :span="4">
+      <el-col :span="4" style="padding:30px 30px 100px 0px;">
         <side-nav></side-nav>
       </el-col>
-      <el-col :span="20">
-        <vcontent></vcontent>
+      <el-col  :span="20" style="padding:30px 50px 100px 0px;">
+        <vcontent class="center-block"></vcontent>
       </el-col>
 
     </el-row>
@@ -17,11 +17,11 @@
 </template>
 
 <script>
-import vheader from '@/components/header'
-import topNav from '@/components/topNav'
-import sideNav from  '@/components/sideNav'
-import vfooter from '@/components/footer'
-import vcontent from  '@/components/content'
+import vheader from '@/components/main/header'
+import topNav from '@/components/main/topNav'
+import sideNav from  '@/components/main/sideNav'
+import vfooter from '@/components/main/footer'
+import vcontent from  '@/components/main/content'
 export default {
   name: 'home',
   data () {

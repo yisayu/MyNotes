@@ -1,8 +1,8 @@
 <template>
   <div class="login" id="login">
-      <el-row style="z-index: 1">
-          <el-col :xs="0" :md="8"><div style="height: 200px;"></div></el-col>
-          <el-col :xs="24" :md="8" class="center-block ">
+      <el-row style="z-index: 1" >
+          <el-col :xs="0" :md="8"><div style="height: 100px;"></div></el-col>
+          <el-col :xs="24" :md="8" class="center-block srh">
               <div><img src="../../static/images/logo.png" alt=""></div>
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="80px" id="searchForm">
                 <el-form-item label="防伪码" prop="seccode">
@@ -22,24 +22,24 @@
             </el-form>
           </el-col>
         <el-col :md="2" style="height: 1px;"></el-col>
-        <el-col :md="6">
+        <el-col :md="6" class="log">
           <button  class="btn-2 enter" @click="show = !show">企业入口 <br><span class="el-icon-arrow-down
 "></span></button>
           <transition name="fade">
             <el-form :model="loginForm" :rules="login" ref="loginForm" label-width="100px" class="loginForm" v-show="show">
-              <el-form-item label="企业编号" prop="compNum">
-                <el-input type="text" v-model="loginForm.compNum" auto-complete="off"></el-input>
+              <el-form-item label="企业编号" prop="cid">
+                <el-input type="text" v-model="loginForm.cid" auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="用户名" prop="compUsername">
-                <el-input type="text" v-model="loginForm.compUsername" auto-complete="off"></el-input>
+              <el-form-item label="用户名" prop="name">
+                <el-input type="text" v-model="loginForm.name" auto-complete="off"></el-input>
               </el-form-item>
-              <el-form-item label="密码" prop="compPass">
-                <el-input type="text" v-model="loginForm.compPass" auto-complete="off"></el-input>
+              <el-form-item label="密码" prop="pwd">
+                <el-input type="text" v-model="loginForm.pwd" auto-complete="off"></el-input>
               </el-form-item>
               <el-row>
                 <el-col :span="15">
                   <el-form-item label="验证码" prop="compVercode" :span="12">
-                    <el-input v-model="compVercode"></el-input>
+                    <el-input v-model="loginForm.compVercode"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="9" class="ver">
@@ -72,20 +72,25 @@
           return callback(new Error('必须为纯数字'));
         }
       }
+
       return {
-        hello: proxy.bindServiceMethod({
+        srh:proxy.bindServiceMethod({
           beanName: "helloService",  //服务名
           method: "sayHi"   //方法名
         }),
         show:false,
         vcode:'',
         lcode:'',
-        compVercode:'',
-
         formLabelWidth: '120px',
         ruleForm: {
           seccode: '',
           vercode: '',
+        },
+        loginForm: {
+          cid:'',
+          name: '',
+          pwd:'',
+          compVercode:''
         },
         rules: {
           seccode: [
@@ -94,20 +99,16 @@
 
           ],
           vercode: [
-            { required: true, message: '防伪码不能为空', trigger: 'change' },
-            { min: 5, max: 5, message: '验证码为5位字符'}
+            { required: true, message: '验证码不能为空', trigger: 'change' },
+            { min: 5, max: 5, message: '验证码为5位字符', trigger: 'change'}
           ]
         },
       login:{
-          compNum:[
-            { required: true, message: '企业编号不能为空', trigger: 'change' },
-            { min: 4, max: 4, message: '企业编号为4位数字'},
-            { validator: isNum, trigger: 'blur' }
+          cid: [],
+          name:[
+            { required: true, message: '用户名不能为空', trigger: 'blur' },
           ],
-          compUsername:[
-            { required: true, message: '用户名不能为空', trigger: 'change' },
-          ],
-          compPass:[
+          pwd:[
             { required: true, message: '密码不能为空', trigger: 'change' },
           ],
           compVercode:[
@@ -115,21 +116,23 @@
             { min: 5, max: 5, message: '验证码为5位字符',trigger:'blur,change'}
           ]
       },
-       loginForm: {
-         compNum:'',
-         compUsername: '',
-         compPass:'',
 
-        },
       }
 
     },
     methods: {
       onSearch () {
         this.$refs['ruleForm'].validate((valid) => {
-          console.log('haha');
           if (valid) {
-            console.log('123');
+            if(this.vcode.toLowerCase() == this.ruleForm.vercode.toLowerCase()){
+              this.srh(this.ruleForm).then(function(json) {
+                if(json.result) {
+                  window.location.hash = '/genuine'
+                }else {
+                  window.location.hash = '/fake'
+                }
+              }).fail()
+            }
             return true;
           } else {
             console.log('error submit!!');
@@ -139,17 +142,24 @@
 
       },
       onLogin() {
+//        console.log(this)
         this.$refs['loginForm'].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            if(this.lcode.toLowerCase() == this.loginForm.compVercode.toLowerCase()){
+              proxy.login({cid:this.loginForm.cid,name:this.loginForm.name,pwd:this.loginForm.pwd}).then((json)=> {
+                proxy.logout()
+               $store.commit('serUserInfo',json);
+                alert('登录成功!')
+              }).fail(function(e) {
+                console.log(e);
+                alert('用户名或密码错误')});
+            }
           } else {
             console.log('error submit!!');
             return false;
           }
         });
-        if(this.lcode.toLowerCase() == this.loginForm.compVercode.toLowerCase()){
 
-        }
       },
       newCode (codename) {
         var arrays = new Array(
@@ -222,6 +232,9 @@
     height:40px;
     font-size:20px;
     color: rgba(87, 87, 87, 0.75);
+  }
+  .log input{
+    color: rgba(255, 215, 90, 0.75);
   }
   .login .search {
     border:2px solid rgba(255, 242, 171, 0.5);
